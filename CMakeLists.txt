@@ -1,6 +1,6 @@
 # CMakeLists.txt for event package. It creates a library with dictionary and a main program
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(StarkJr_Unpacker)
+project(ASGARD_Unpacker)
 
 # You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
@@ -33,9 +33,9 @@ target_link_libraries(Hit ${ROOT_LIBRARIES})
 
 
 #---Create  a main program using the library
-add_executable(StarkJr_Unpacker Unpacker.cpp)
-target_link_libraries(StarkJr_Unpacker HitBuilder)
-target_link_libraries(StarkJr_Unpacker ${ROOT_LIBRARIES})
+add_executable(ASGARD_Unpacker Unpacker.cpp)
+target_link_libraries(ASGARD_Unpacker HitBuilder)
+target_link_libraries(ASGARD_Unpacker ${ROOT_LIBRARIES})
 
-target_include_directories(StarkJr_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-ROOT_GENERATE_DICTIONARY(Hit_dict Hit.h MODULE StarkJr_Unpacker LINKDEF HitLinkDef.h)
+target_include_directories(ASGARD_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+ROOT_GENERATE_DICTIONARY(Hit_dict Hit.h MODULE ASGARD_Unpacker LINKDEF HitLinkDef.h)

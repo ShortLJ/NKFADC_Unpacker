@@ -20,7 +20,7 @@
 
 void print_usage()
 {
-	fprintf(stdout,"StarkJr_Unpacker \\\n");
+	fprintf(stdout,"ASGARD_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
 	fprintf(stdout,"--map,-m <file.txt>\\\n");
 	fprintf(stdout,"--timewindow,-tw <timewindow> ## 8 ns for NKfadc\\\n");

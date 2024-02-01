@@ -1,5 +1,5 @@
-# StarkJr_Unpacker
-Unpacker for StarkJr in CENS
+# ASGARD_Unpacker
+Unpacker for ASGARD in CENS
 
 mkdir -p build && cd build
 
@@ -7,4 +7,4 @@ cmake ../
 
 cmake --build .
 
-./StarkJr_Unpacker -h
+./ASGARD_Unpacker -h
