@@ -4,203 +4,162 @@
 #include "HitBuilder.h"
 
 
-HitBuilder::HitBuilder(TimeSorter *timesorter)
-	: timesorter(timesorter)
+HitBuilder::HitBuilder()
 {
 	//b_first=1;
-	minlgt=0;
 }
 
 HitBuilder::~HitBuilder()
 {	}
 
-
-void HitBuilder::ReadMapFile(const char *file)
+void HitBuilder::ReadMapFile(const char *filename)
 {
-	vector<int> v_det; 
-	vector<int> v_sid_junc, v_mid_junc, v_chf_junc, v_chl_junc;
-	vector<int> v_sid_ohmic, v_mid_ohmic, v_chf_ohmic, v_chl_ohmic;
-	
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++)
+	{
+		map_type		[isid][imid][ich] = 0xFF;
+		map_det			[isid][imid][ich] = 0xFF;
+		map_crystal		[isid][imid][ich] = 0XFF;
+		for (itype=0; itype<Ntype; itype++)
+			map_idx[itype]	[isid][imid][ich] = 0xFF;
+	}
+
+	/*
 	FILE *fr = fopen(file,"r");
 	if(fr==NULL)
 	{
 		fprintf(stderr,"map file is not opened.\n");
 		exit(-6);
 	}
-	int a[9];
-	//int det,	junc_sid,	junc_mid,	junc_ch_begin,	junc_ch_end,	ohmic_sid,	ohmic_mid,	ohmic_ch_begin,	ohmic_ch_end;
+	const int ndeci = 8;
+	//uint8_t a[ndeci];	// type det crystal sid mid chL chU idx0
+	uint8_t chL, chU, idx0;
 	char line[100];
 	while (fgets(line, sizeof line, fr))
 	{
 		if (*line == '#') continue;
-		if (sscanf(line, "%d %d %d %d %d %d %d %d %d",&a[0],&a[1],&a[2],&a[3],&a[4],&a[5],&a[6],&a[7],&a[8]) !=9)
+		if (sscanf(line, "%u %u %u %u %u %u %u",
+			&type,&idet,&icry,&isid,&imid,&chL,&chU,&idx0) !=ndeci)
 		{
 			fprintf(stderr,"failed to read map file\n");
 			exit(-7);
 		}
 		else
 		{
-			fprintf(stdout,"%d %d %d %d %d %d %d %d %d\n",a[0],a[1],a[2],a[3],a[4],a[5],a[6],a[7],a[8]);
-			v_det		.push_back(a[0]);
-			v_sid_junc	.push_back(a[1]);
-			v_mid_junc	.push_back(a[2]);
-			v_chf_junc	.push_back(a[3]);
-			v_chl_junc	.push_back(a[4]);
-			v_sid_ohmic	.push_back(a[1]);
-			v_mid_ohmic	.push_back(a[2]);
-			v_chf_ohmic	.push_back(a[3]);
-			v_chl_ohmic	.push_back(a[4]);
+			fprintf(stdout,"%u %u %u %u %u %u %u %u\n",itype,idet,icry,isid,imid,chL,chU,idx0);
+			for (ich=a[7]; ich<=a[8]; ich++)
+			{
+				map_type		[isid][imid][ich] = itype;
+				map_det			[isid][imid][ich] = idet;
+				map_crystal		[isid][imid][ich] = icry;
+				map_idx[itype]	[isid][imid][ich] = idx0++;
+			}
 		}
 	}
-		
-
-
-}
-
-
-
-
-void HitBuilder::Build()
-{
-	if(AllEmpty())
+	*/
+	for (idet=0; idet<Ndet; idet++) for (icry=0; icry<Ncry; icry++) for (ifv=0; ifv<Nfv; ifv++)
 	{
-		fprintf(stdout,"all q in timesorter is empty\n");
-		return;
+		itype=0;
+		isid=idet; imid=icry+1; ich=ifv+0; 
+		map_det			[isid][imid][ich] = idet;
+		map_crystal		[isid][imid][ich] = icry;
+		map_type		[isid][imid][ich] = itype;
+		map_idx[itype]	[isid][imid][ich] = ifv;
 	}
-	else	
+	for (idet=0; idet<Ndet; idet++) for (icry=0; icry<Ncry; icry++) for (iseg=0; iseg<Nseg; iseg++)
 	{
-		minlgt = GetMinLGT();
-		Clear();
-		for (idet=0; idet<Ndet; idet++)	FindSigWithLGT(idet, minlgt, timewindow);
+		itype=1;
+		isid=idet; imid=icry+1; ich=iseg+2; 
+		map_det			[isid][imid][ich] = idet;
+		map_crystal		[isid][imid][ich] = icry;
+		map_type		[isid][imid][ich] = itype;
+		map_idx[itype]	[isid][imid][ich] = iseg;
 	}
-}
-
-
-
-
-
-uint64_t HitBuilder::GetMinLGT()
-{
-	uint64_t ret;
-	bool fir=1;
-	for (idet=0; idet<Ndet; idet++)
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)
 	{
-		for (ipad=0; ipad<Npad; ipad++)	if(!timesorter->Empty(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]))
-		{
-			if(fir) {ret=timesorter->Top(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]).local_gate_time; fir=0; }
-			if(ret>timesorter->Top(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]).local_gate_time)
-				ret=timesorter->Top(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]).local_gate_time;
-		}
-		for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]))
-		{
-			if(fir) {ret=timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]).local_gate_time; fir=0; }
-			if(ret>timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]).local_gate_time)
-				ret=timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]).local_gate_time;
-		}
-		for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]))
-		{
-			if(fir) {ret=timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]).local_gate_time; fir=0; }
-			if(ret>timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]).local_gate_time)
-				ret=timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]).local_gate_time;
-		}
+		for(ich=0; ich<Nch; ich++)
+			fprintf(stdout,"%u\t",map_crystal       [isid][imid][ich]);
+		fprintf(stdout,"\n");
 	}
-	return ret;
+
 }
 
-void HitBuilder::Clear(int idet)
+
+
+void HitBuilder::SortByDet(vector<Sig> v_sig_coin)
 {
-	for (int itype=0; itype<Ntype; itype++)
-		v_sig[itype][idet].clear();
+	vector<Sig>::iterator it_sig;
+	for (it_sig=v_sig_coin.begin(); it_sig!=v_sig_coin.end(); it_sig++)
+	{
+		isid = (*it_sig).sid; imid = (*it_sig).mid; ich = (*it_sig).ch;
+		itype = map_type		[isid][imid][ich];
+		idet  = map_det			[isid][imid][ich];
+		icry  = map_crystal		[isid][imid][ich];
+		iidx  = map_idx[itype]	[isid][imid][ich];
+		//fprintf(stdout, "HitBuilder::SortByDet(vector<Sig> v_sig_coin): sid %u mid %u ch %u itype %u idet %u icry %u iidx %u\n",
+		//	isid, imid, ich, itype, idet, icry, iidx);
+
+		if(!isvalid(itype, idet, icry, iidx))
+		{
+			fprintf(stderr,"HitBuilder::SortByDet(vector<Sig> v_sig_coin): not valid\n");
+			fprintf(stderr, "HitBuilder::SortByDet(vector<Sig> v_sig_coin): sid %u mid %u ch %u itype %u idet %u icry %u iidx %u\n",
+					isid, imid, ich, itype, idet, icry, iidx);
+			return;
+		}
+		v_sig[idet][icry][itype].push_back(*it_sig);
+	}
 }
+
+int HitBuilder::Size(uint8_t idet, uint8_t icry, uint8_t itype)
+{
+	return v_sig[idet][icry][itype].size();
+}
+
+
+
+CryHit HitBuilder::GetCryHit(uint8_t idet, uint8_t icry)
+{
+	//fprintf(stdout,"v_sig[idet%u][icry%u][0].size() %ld v_sig[idet%u][icry%u][1].size() %ld\n",
+	//		idet,icry,v_sig[idet][icry][0].size(),
+	//		idet,icry,v_sig[idet][icry][1].size());
+	//fprintf(stdout,"CryHit HitBuilder::GetCryHit(uint8_t idet, uint8_t icry)\n");
+	CryHit tmp(idet,icry,v_sig[idet][icry][0], v_sig[idet][icry][1]);
+	return tmp;
+}
+
 void HitBuilder::Clear()
 {
-	for (int i=0; i<Ndet; i++) Clear(i);
-}
-void HitBuilder::Push_Back(int idet, Sig sig, int itype)
-{
-	if(itype>=0 && itype<3)
-		v_sig[itype][idet].push_back(sig);
-	else {fprintf(stderr,"HitBuilder::Push_Back(int idet, Sig sig, int type): Unknown type\n");}
-}
-void HitBuilder::Push_Back_AndPop(int idet, uint8_t isid, uint8_t imid, uint8_t ich, int type)
-{
-	Push_Back(idet, timesorter->Top(isid,imid,ich), type);
-	timesorter->Pop(isid,imid,ich);
-}
-uint32_t HitBuilder::Size(int idet)
-{
-	uint32_t ret=0;
-	for (int itype=0; itype<3; itype++)	ret+=Size(idet,itype);
-	return ret;
-}
-uint32_t HitBuilder::Size(int idet, int itype)
-{
-	if(itype>=0 && itype<3)
-		return v_sig[itype][idet].size();
-	else {fprintf(stderr,"HitBuilder::Size(int idet, int type): Unknown type\n"); exit(-7);}
-	return -1;
-}
-
-
-
-int HitBuilder::FindSigWithLGT(int idet, uint64_t lgt, int64_t tw)
-{
-	for (ipad=0; ipad<Npad; ipad++)	if(!timesorter->Empty(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]))
+	for (idet=0; idet<Ndet; idet++)	for (icry=0; icry<Ncry; icry++)	
 	{
-		if(timesorter->Top(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad]).local_gate_time-lgt<=tw)
-			Push_Back_AndPop(idet,sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad],0);
-	}
-	for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]))
-	{
-		if(timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr]).local_gate_time-lgt<=tw) 
-			Push_Back_AndPop(idet,sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr],1);
-	}
-	for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]))
-	{
-		if(timesorter->Top(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr]).local_gate_time-lgt<=tw) 
-			Push_Back_AndPop(idet,sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr],2);
-	}
-	return Size(idet);
-}
-
-void HitBuilder::PrintBuilt(int idet)
-{
-	fprintf(stdout,"//// Hit candidate on det%u built ////\n", idet);
-
-	for (int itype=0; itype<Ntype; itype++)	for (int i=0; i<Size(idet, itype); i++)
-	{
-		fprintf(stdout,"type%d\t", itype);
-		v_sig[itype][idet].at(i).Print();
-	}
-}
-void HitBuilder::PrintBuilt()
-{
-	for (int idet=0; idet<Ndet; idet++)
-	{
-		if (Size(idet)>0) PrintBuilt(idet);
+		for (itype=0; itype<Ntype; itype++)
+		{
+			v_sig[idet][icry][itype].clear();
+		}
 	}
 }
 
 
 
-
-bool HitBuilder::AllEmpty(int idet)
+bool HitBuilder::isvalid(uint8_t itype, uint8_t idet, uint8_t icry, uint8_t iidx )
 {
-	for (ipad=0; ipad<Npad; ipad++)	if(!timesorter->Empty(sid_ohmic[idet], mid_ohmic[idet], ch_ohmic[idet][ipad])) return 0;
-	for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncU[idet][istr])) return 0;
-	for (istr=0; istr<Nstr; istr++)	if(!timesorter->Empty(sid_junc[idet], mid_junc[idet], ch_juncD[idet][istr])) return 0;
+	/*if (itype==0Xff) return 0;
+	if (idet ==0xff) return 0;
+	if (icry ==0xff) return 0;
+	if (itype==0 && ifv  ==0xff) return 0;
+	if (itype==1 && iseg ==0xff) return 0;*/
+	
+	/*if (itype>=Ntype) return 0;
+	if (idet >=Ndet ) return 0;
+	if (icry >=Ncry ) return 0;
+	if (itype==0 && ifv  >=Nfv  ) return 0;
+	if (itype==1 && iseg >=Nseg ) return 0;*/
+	
+	if (itype>=Ntype)	{fprintf(stderr,"itype%u>=Ntype%u\n", itype, Ntype); return 0;}
+	if (idet>=Ndet)	{fprintf(stderr,"idet%u>=Ndet%u\n", idet, Ndet); return 0;}
+	if (icry>=Ncry)	{fprintf(stderr,"icry%u>=Ncry%u\n", icry, Ncry); return 0;}
+	if (itype==0 && iidx>=Nfv)	{fprintf(stderr,"ifv%u>=Nfv%u\n", ifv, Nfv); return 0;}
+	if (itype==1 && iidx>=Nseg)	{fprintf(stderr,"iseg%u>=Nseg%u\n", iseg, Nseg); return 0;}
 	return 1;
 }
-
-bool HitBuilder::AllEmpty()
-{
-	for (idet=0; idet<Ndet; idet++)	if(!AllEmpty(idet)) return 0;
-	return 1;
-}
-
-
-
-
 
 
 bool HitBuilder::isGood()

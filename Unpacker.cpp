@@ -8,14 +8,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-//#include "TInterpreter.h"
 #include "TFile.h"
 #include "TTree.h"
 
 #include "Sig.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
-//#include "WriteTree.h"
+#include "CryHit.h"
 
 
 void print_usage()
@@ -75,33 +74,49 @@ int main(int argc, char *argv[])
 
 
 	TimeSorter timesorter(inputfilename);
-	timesorter.ReadAndFillQ();
+	timesorter.SetTimeWindow(timewindow);
 
-	timesorter.PrintSize();
+	HitBuilder hitbuilder;
+	hitbuilder.ReadMapFile("");
 
-	HitBuilder hitbuilder(&timesorter);
-	hitbuilder.SetTimeWindow(timewindow);
-
-	//gInterpreter->GenerateDictionary("vector<Hit>", "Hit.h");
 
 	TFile *file = new TFile("output.root","recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
 	//Hit hits[Ndet];
 	//tree->Branch("hits[Ndet]", hits );
-	vector<Hit> hits;
-	tree->Branch("vector<Hit>", &hits );
+	CryHit cryhit;
+	vector<CryHit> event;
+	tree->Branch("vector<CryHit>", &event );
 
 
-	while(!hitbuilder.AllEmpty())
+
+	timesorter.ReadAndFillQ();
+	timesorter.PrintSize();
+
+	while(!timesorter.AllEmpty())
 	{
-		hitbuilder.Build();
-		//hitbuilder.PrintBuilt();
-		for (int idet=0; idet<Ndet; idet++)
+		timesorter.ClearCoinSig();
+		hitbuilder.Clear();
+		event.clear();
+
+		uint64_t minlgt = timesorter.GetMinLGT();
+		int size =0;
+		size+=timesorter.FindSigWithLGT(minlgt);
+		size+=timesorter.FindSigWithLGT(minlgt);
+		//fprintf(stdout,"size %d\n",size);
+		hitbuilder.SortByDet(timesorter.GetCoinvSig());
+		for (uint8_t idet=0; idet<Ndet; idet++) for (uint8_t icry=0; icry<Ncry; icry++)
 		{
-			//hits[idet] = hitbuilder.GetHit(idet);
-			hits.clear();
-			hits.push_back(hitbuilder.GetHit(idet));
+			//fprintf(stdout,"size %d size %d\n", hitbuilder.Size(idet,icry,0),hitbuilder.Size(idet,icry,1));
+			if (hitbuilder.Size(idet,icry,0) + hitbuilder.Size(idet,icry,1)>0)
+			{
+				cryhit = hitbuilder.GetCryHit(idet, icry);
+				//cryhit.Print();
+				event.push_back(cryhit);
+			}
 		}
+		//fprintf(stdout,"event.size() %d\n",event.size());
+		//if(!event.empty()) 
 		tree->Fill();
 	}
 

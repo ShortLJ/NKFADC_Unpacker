@@ -22,14 +22,22 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 #---Create a shared library with geneated dictionary
 add_library(Sig SHARED src/Sig.cxx inc/Sig.h)
-add_library(TimeSorter SHARED src/TimeSorter.cxx inc/TimeSorter.h)
+
+add_library(TimeSorter SHARED src/TimeSorter.cxx inc/TimeSorter.h inc/Global.h)
 target_link_libraries(TimeSorter Sig)
-add_library(HitBuilder SHARED src/HitBuilder.cxx inc/HitBuilder.h)
+
+add_library(FVHit SHARED src/FVHit.cxx inc/FVHit.h inc/Global.h)
+target_link_libraries(FVHit ${ROOT_LIBRARIES})
+add_library(SegHit SHARED src/SegHit.cxx inc/SegHit.h inc/Global.h)
+target_link_libraries(SegHit ${ROOT_LIBRARIES})
+add_library(CryHit SHARED src/CryHit.cxx inc/CryHit.h inc/Global.h)
+target_link_libraries(CryHit ${ROOT_LIBRARIES})
+target_link_libraries(CryHit FVHit SegHit)
+
+add_library(HitBuilder SHARED src/HitBuilder.cxx inc/HitBuilder.h inc/Global.h)
 target_link_libraries(HitBuilder TimeSorter)
-target_link_libraries(HitBuilder Hit)
-add_library(Hit SHARED src/Hit.cxx inc/Hit.h)
-#target_link_libraries(Hit PUBLIC ${ROOT_LIBRARIES} ROOT::RIO ROOT::Net)
-target_link_libraries(Hit ${ROOT_LIBRARIES})
+target_link_libraries(HitBuilder CryHit)
+
 
 
 #---Create  a main program using the library
@@ -38,4 +46,4 @@ target_link_libraries(ASGARD_Unpacker HitBuilder)
 target_link_libraries(ASGARD_Unpacker ${ROOT_LIBRARIES})
 
 target_include_directories(ASGARD_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-ROOT_GENERATE_DICTIONARY(Hit_dict Hit.h MODULE ASGARD_Unpacker LINKDEF HitLinkDef.h)
+ROOT_GENERATE_DICTIONARY(Hit_dict HitTypes.h MODULE ASGARD_Unpacker LINKDEF HitLinkDef.h)

@@ -1,40 +1,35 @@
-#include "TObject.h"
 
+#include "Global.h"
+
+#include "TObject.h"
 #include "Sig.h"
 
-#ifndef __HIT__
-#define __HIT__
+#ifndef __FVHIT__
+#define __FVHIT__
 
 using namespace std;
 
-class Hit : public TObject
+class FVHit : public Sig
 {
 	public:
-		vector<Sig> v_sig_pad;
-		vector<Sig> v_sig_stU;
-		vector<Sig> v_sig_stD;
-		Hit();
-		Hit(vector<Sig>, vector<Sig>, vector<Sig>);
-		~Hit();
+		uint8_t det;
+		uint8_t crystal;
+		uint8_t idx;
+
+		float Energy; // 32 bit: 1bit sign, 8bit exponent, 23bit fraction > 16 bit ADC
+
+		FVHit();
+		FVHit(Sig sig);
+		FVHit(uint8_t det, uint8_t crystal, uint8_t idx, Sig sig);
+		~FVHit();
 
 		void Clear();
 
-		ClassDef(Hit, 1)
-
-		/*
-		uint8_t detID;
-		uint8_t stripID;
-		uint8_t padID;
-
-		Int_t stripValU;
-		Int_t stripValD;
-		Int_t padVal;
+		ClassDef(FVHit, 1)
 
 
-
-		Bool_t isDet;
-		*/
 	public:
+
 		/*
 		virtual void Clear(Option_t* = "");
 
@@ -51,7 +46,7 @@ class Hit : public TObject
 
 
 
-#endif // __HIT__
+#endif // __FVHIT__
 
 
 

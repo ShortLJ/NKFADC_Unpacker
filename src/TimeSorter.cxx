@@ -16,7 +16,7 @@ TimeSorter::TimeSorter(char *inputfilename)
 		exit(-2);
 	}
 	fseek(fp, 0L, SEEK_END);
-	file_size = ftell(fp);
+	file_size = ftell(fp)/10;
 	fprintf(stdout, "Opened innput File: \"%s\" (%d Bytes)\n",inputfilename, file_size);
 	if (file_size<0)
 	{
@@ -66,6 +66,61 @@ int TimeSorter::ReadAndFillQ()
 	return evt_processed;
 }
 
+bool TimeSorter::AllEmpty()
+{
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++)
+	{
+		if (!Empty(isid,imid,ich)) return 0;
+	}
+	return 1;
+}
+
+uint64_t TimeSorter::GetMinLGT()
+{
+	uint64_t ret=-1;
+	//bool fir=1;
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++) if (!Empty(isid,imid,ich))
+	{
+		//if (fir) {ret=Top(isid,imid,ich).local_gate_time; fir=0; }
+		if (ret > Top(isid,imid,ich).local_gate_time)
+			ret = Top(isid,imid,ich).local_gate_time;
+	}
+	if(ret==-1)
+	{
+		fprintf(stderr,"TimeSorter::GetMinLGT(): all q is empty\n");
+		exit (-11);
+	}
+	return ret;
+}
+
+int TimeSorter::FindSigWithLGT(uint64_t lgt)
+{
+	int ret=0;
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++) if (!Empty(isid,imid,ich))
+	{
+		if (Top(isid,imid,ich).local_gate_time - lgt <= timewindow)
+		{
+			v_sig.push_back(Top(isid,imid,ich));
+			Pop(isid,imid,ich);
+			ret++;
+		}
+	}
+	return ret;
+}
+
+void TimeSorter::PrintCoin()
+{
+	fprintf(stdout,"//// Coincidence built ////\n");
+	vector<Sig>::iterator it_sig;
+	for (it_sig = v_sig.begin(); it_sig!=v_sig.end(); it_sig++)
+		(*it_sig).Print();
+}
+
+
+
+//////// internal methods ////////////// 
+
+
 uint32_t TimeSorter::Pop(uint8_t isid, uint8_t imid, uint8_t ich)
 {
 	checker(isid,imid,ich);
@@ -82,9 +137,9 @@ bool TimeSorter::Empty(uint8_t isid, uint8_t imid, uint8_t ich)
 
 void TimeSorter::Push(Sig sig)
 {
-	uint8_t isid = sig.sid; 
-	uint8_t imid = sig.mid;
-	uint8_t ich = sig.ch;
+	isid = sig.sid; 
+	imid = sig.mid;
+	ich = sig.ch;
 	checker(isid,imid,ich);
 	q_sig[isid][imid][ich].push(sig);
 }
@@ -105,13 +160,9 @@ Sig TimeSorter::Top(uint8_t isid, uint8_t imid, uint8_t ich)
 	return q_sig[isid][imid][ich].top();
 }
 
-
 void TimeSorter::Clear()
 {
-	uint8_t isid;
-	uint8_t imid;
-	uint8_t ich;
-	
+
 	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(ich=0; ich<Nch; ich++)
 	{
 		while(q_sig[isid][imid][ich].size()>0) 
@@ -124,10 +175,7 @@ void TimeSorter::Clear()
 void TimeSorter::PrintTop(uint8_t isid, uint8_t imid, uint8_t ich)
 {
 	checker(isid,imid,ich);
-	//if(Empty(isid,imid,ich)) return;
 	Top(isid,imid,ich).Print();
-	//Sig st = Top(isid,imid,ich);
-	//st.Print();
 }
 
 void TimeSorter::PrintTopAndPop(uint8_t isid, uint8_t imid, uint8_t ich)
@@ -138,10 +186,6 @@ void TimeSorter::PrintTopAndPop(uint8_t isid, uint8_t imid, uint8_t ich)
 
 void TimeSorter::PrintTopAll()
 {
-	uint8_t isid;
-	uint8_t imid;
-	uint8_t ich;
-	
 	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(ich=0; ich<Nch; ich++) if(imid%2==1)
 	{
 		if(Empty(isid,imid,ich)) continue;
@@ -151,12 +195,12 @@ void TimeSorter::PrintTopAll()
 
 void TimeSorter::PrintSize()
 {
-	for(uint8_t isid=0; isid<Nsid; isid++)	for(uint8_t imid=0; imid<Nmid; imid++)	//if(imid%2==1)
+	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	//if(imid%2==1)
 	{
 		fprintf(stdout,"\nsid %u mid %u\t", isid, imid);
-		for(uint8_t ich=0     ; ich<Nch/2; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
+		for (ich=0     ; ich<Nch/2; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
 		fprintf(stdout,"\nsid %u mid %u\t", isid, imid);
-		for(uint8_t ich=Nch/2 ; ich<Nch  ; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
+		for (ich=Nch/2 ; ich<Nch  ; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
 		
 	}
 	fprintf(stdout,"\n");
@@ -169,7 +213,7 @@ bool TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t ich)
 	if(isid<Nsid && imid<Nmid && ich<Nch) return true;
 	else
 	{
-		fprintf(stderr,"err: failed at (isid%u<Nsid%d && imid%u<Nmid%d && ich%u<ich%d)\n", isid,Nsid,imid,Nmid,ich,Nch);
+		fprintf(stderr,"TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t ich): (isid%u<Nsid%d && imid%u<Nmid%d && ich%u<Nch%d)\n", isid,Nsid,imid,Nmid,ich,Nch);
 		exit(-4);
 		return false;
 	}
