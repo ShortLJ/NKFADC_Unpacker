@@ -16,7 +16,7 @@ TimeSorter::TimeSorter(char *inputfilename)
 		exit(-2);
 	}
 	fseek(fp, 0L, SEEK_END);
-	file_size = ftell(fp)/10;
+	file_size = ftell(fp);
 	fprintf(stdout, "Opened innput File: \"%s\" (%d Bytes)\n",inputfilename, file_size);
 	if (file_size<0)
 	{

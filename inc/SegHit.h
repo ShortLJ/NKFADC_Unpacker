@@ -1,7 +1,4 @@
-
 #include "Global.h"
-
-#include "TObject.h"
 #include "Sig.h"
 
 #ifndef __SEGHIT__
@@ -13,20 +10,18 @@ class SegHit : public Sig
 {
 	public:
 		uint8_t det;
-		uint8_t crystal;
+		uint8_t pdet;
+		uint8_t pcry;
 		uint8_t idx;
 
 		float Energy; // 32 bit: 1bit sign, 8bit exponent, 23bit fraction > 16 bit ADC
 
 		SegHit();
 		SegHit(Sig sig);
-		SegHit(uint8_t det, uint8_t crystal, uint8_t idx, Sig sig);
+		SegHit(uint8_t det, uint8_t idx, Sig sig);
 		~SegHit();
 
 		void Clear();
-
-		ClassDef(SegHit, 1)
-
 
 	public:
 

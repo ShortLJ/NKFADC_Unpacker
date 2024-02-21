@@ -14,7 +14,7 @@
 #include "Sig.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
-#include "CryHit.h"
+#include "ASGARD_Event.h"
 
 
 void print_usage()
@@ -82,11 +82,8 @@ int main(int argc, char *argv[])
 
 	TFile *file = new TFile("output.root","recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
-	//Hit hits[Ndet];
-	//tree->Branch("hits[Ndet]", hits );
-	CryHit cryhit;
-	vector<CryHit> event;
-	tree->Branch("vector<CryHit>", &event );
+	ASGARD_Event asgard_event = ASGARD_Event();
+	tree->Branch("ASGARD_Event", "ASGARD_Event", &asgard_event, 32000, 0 );
 
 
 
@@ -97,24 +94,16 @@ int main(int argc, char *argv[])
 	{
 		timesorter.ClearCoinSig();
 		hitbuilder.Clear();
-		event.clear();
 
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;
 		size+=timesorter.FindSigWithLGT(minlgt);
 		size+=timesorter.FindSigWithLGT(minlgt);
-		//fprintf(stdout,"size %d\n",size);
-		hitbuilder.SortByDet(timesorter.GetCoinvSig());
-		for (uint8_t idet=0; idet<Ndet; idet++) for (uint8_t icry=0; icry<Ncry; icry++)
-		{
-			//fprintf(stdout,"size %d size %d\n", hitbuilder.Size(idet,icry,0),hitbuilder.Size(idet,icry,1));
-			if (hitbuilder.Size(idet,icry,0) + hitbuilder.Size(idet,icry,1)>0)
-			{
-				cryhit = hitbuilder.GetCryHit(idet, icry);
-				//cryhit.Print();
-				event.push_back(cryhit);
-			}
-		}
+		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
+		
+		asgard_event = ASGARD_Event(v_sig_coin);
+
+
 		//fprintf(stdout,"event.size() %d\n",event.size());
 		//if(!event.empty()) 
 		tree->Fill();

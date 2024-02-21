@@ -1,5 +1,8 @@
 #include "TObject.h"
 
+#include <vector>
+
+#include "Global.h"
 #include "SegHit.h"
 #include "FVHit.h"
 
@@ -8,25 +11,23 @@
 
 using namespace std;
 
-class CryHit : public TObject
+class CryHit //: public TObject
 {
 	public:
 		uint8_t det;
-		uint8_t crystal;
+		uint8_t pdet;
+		uint8_t pcry;
 
 		vector<FVHit> v_fvhit;
 		vector<SegHit> v_seghit;
 		
 
 		CryHit();
-		CryHit(uint8_t idet, uint8_t icry, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg);
-		CryHit(vector<FVHit>, vector<SegHit>);
+		CryHit(uint8_t idet, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg);
 		~CryHit();
 
 		void Clear();
 		void Print();
-
-		ClassDef(CryHit, 1)
 
 	public:
 
@@ -43,7 +44,7 @@ class CryHit : public TObject
 		ClassDef(TAnaX6, 1)
 		*/
 	private:
-		bool checkid();
+		bool isValid();
 };
 
 

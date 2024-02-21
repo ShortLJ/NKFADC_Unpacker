@@ -13,8 +13,7 @@
 #define Nmid 10
 #define Nch 10
 
-#define Ndet 1
-#define Ncry 4 // 4 crystals for each detector
+#define Ndet 4 // 1 det, 4 crystals for each detector
 #define Ntype 2 // FV, seg for each crystal
 #define Nseg 8 // 8 segments for each crystal
 #define Nfv 2 // 8 full volume for each crystal
@@ -22,7 +21,6 @@
 #include <stdint.h>
 extern uint8_t	map_type		[N_SID][N_MID][N_CHA];// = {{{0xFF}}};
 extern uint8_t	map_det			[N_SID][N_MID][N_CHA];// = {{{0xFF}}};
-extern uint8_t	map_crystal		[N_SID][N_MID][N_CHA];// = {{{0xFF}}};
 extern uint8_t	map_idx[Ntype]	[N_SID][N_MID][N_CHA];// = {{{0xFF}}};
 
 
