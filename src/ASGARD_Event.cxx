@@ -5,11 +5,7 @@
 
 ASGARD_Event::ASGARD_Event()
 {
-	v_cryhit.clear();
 }
-
-ASGARD_Event::~ASGARD_Event()
-{	}
 
 ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
 {

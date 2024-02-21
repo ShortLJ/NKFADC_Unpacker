@@ -22,9 +22,9 @@ class CryHit //: public TObject
 		vector<SegHit> v_seghit;
 		
 
-		CryHit();
+		CryHit(){	};
 		CryHit(uint8_t idet, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg);
-		~CryHit();
+		~CryHit(){	};
 
 		void Clear();
 		void Print();

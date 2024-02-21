@@ -1,6 +1,5 @@
 #include "FVHit.h"
 
-FVHit::FVHit(){	}
 
 FVHit::FVHit(Sig sig)
 	: Sig(sig)
@@ -21,9 +20,6 @@ FVHit::FVHit(uint8_t idet, uint8_t iidx, Sig sig)
 	pcry = det & 0x03;
 	Energy=0;
 }
-
-FVHit::~FVHit()
-{	}
 
 
 

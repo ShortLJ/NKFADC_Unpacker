@@ -12,9 +12,9 @@ class ASGARD_Event
 	public:
 		vector<CryHit> v_cryhit;
 
-		ASGARD_Event();
+		ASGARD_Event(){	v_cryhit.clear();	}
 		ASGARD_Event(vector<Sig>);
-		~ASGARD_Event();
+		~ASGARD_Event(){	};
 
 
 	private:

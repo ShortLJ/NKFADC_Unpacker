@@ -16,10 +16,10 @@ class FVHit : public Sig
 
 		float Energy; // 32 bit: 1bit sign, 8bit exponent, 23bit fraction > 16 bit ADC
 
-		FVHit();
+		FVHit(){	};
 		FVHit(Sig sig);
 		FVHit(uint8_t det, uint8_t idx, Sig sig);
-		~FVHit();
+		~FVHit(){	};
 
 		void Clear();
 

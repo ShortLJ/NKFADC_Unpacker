@@ -1,7 +1,5 @@
 #include "CryHit.h"
 
-CryHit::CryHit(){	}
-
 CryHit::CryHit(uint8_t idet, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg)
 	: det(idet)
 {
@@ -18,12 +16,6 @@ CryHit::CryHit(uint8_t idet, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg)
 		v_seghit.push_back(FVHit(*it));
 	}
 }
-
-
-CryHit::~CryHit()
-{	}
-
-
 
 
 void CryHit::Print()

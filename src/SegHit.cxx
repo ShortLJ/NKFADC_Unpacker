@@ -1,7 +1,5 @@
 #include "SegHit.h"
 
-SegHit::SegHit(){	}
-
 SegHit::SegHit(Sig sig)
 	: Sig(sig)
 {
@@ -21,10 +19,6 @@ SegHit::SegHit(uint8_t idet, uint8_t iidx, Sig sig)
 	pcry = det & 0x03;
 	Energy=0;
 }
-
-SegHit::~SegHit()
-{	}
-
 
 
 void SegHit::Clear()
