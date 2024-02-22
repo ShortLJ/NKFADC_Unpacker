@@ -13,7 +13,7 @@ CryHit::CryHit(uint8_t idet, vector<Sig> v_sig_fv, vector<Sig> v_sig_seg)
 	}
 	for (it=v_sig_seg.begin(); it!=v_sig_seg.end(); ++it)
 	{
-		v_seghit.push_back(FVHit(*it));
+		v_seghit.push_back(SegHit(*it));
 	}
 }
 
