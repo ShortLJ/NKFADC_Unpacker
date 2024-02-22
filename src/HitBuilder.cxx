@@ -1,4 +1,5 @@
 #include <cstdio>
+#include <stdlib.h>
 
 
 #include "HitBuilder.h"
@@ -22,8 +23,8 @@ void HitBuilder::ReadMapFile(const char *filename)
 			map_idx[itype]	[isid][imid][ich] = 0xFF;
 	}
 
-	/*
-	FILE *fr = fopen(file,"r");
+	
+	FILE *fr = fopen(filename,"r");
 	if(fr==NULL)
 	{
 		fprintf(stderr,"map file is not opened.\n");
@@ -36,8 +37,8 @@ void HitBuilder::ReadMapFile(const char *filename)
 	while (fgets(line, sizeof line, fr))
 	{
 		if (*line == '#') continue;
-		if (sscanf(line, "%u %u %u %u %u %u %u",
-			&type,&idet,&isid,&imid,&chL,&chU,&idx0) !=ndeci)
+		if (sscanf(line, "%hhu %hhu %hhu %hhu %hhu %hhu %hhu",
+			&itype,&idet,&isid,&imid,&chL,&chU,&idx0) !=ndeci)
 		{
 			fprintf(stderr,"failed to read map file\n");
 			exit(-7);
@@ -45,7 +46,7 @@ void HitBuilder::ReadMapFile(const char *filename)
 		else
 		{
 			fprintf(stdout,"%u %u %u %u %u %u %u\n",itype,idet,isid,imid,chL,chU,idx0);
-			for (ich=a[7]; ich<=a[8]; ich++)
+			for (ich=chL; ich<=chU; ich++)
 			{
 				map_type		[isid][imid][ich] = itype;
 				map_det			[isid][imid][ich] = idet;
@@ -53,7 +54,7 @@ void HitBuilder::ReadMapFile(const char *filename)
 			}
 		}
 	}
-	*/
+	/*
 	for (idet=0; idet<Ndet; idet++) for (ifv=0; ifv<Nfv; ifv++)
 	{
 		itype=0;
@@ -70,13 +71,13 @@ void HitBuilder::ReadMapFile(const char *filename)
 		map_det			[isid][imid][ich] = idet;
 		map_idx[itype]	[isid][imid][ich] = iseg;
 	}
+	 */
 	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)
 	{
 		for(ich=0; ich<Nch; ich++)
 			fprintf(stdout,"%u\t",map_det       [isid][imid][ich]);
 		fprintf(stdout,"\n");
 	}
-
 }
 
 

@@ -3,10 +3,6 @@
 
 #include "ASGARD_Event.h"
 
-ASGARD_Event::ASGARD_Event()
-{
-}
-
 ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
 {
 	v_cryhit.clear();

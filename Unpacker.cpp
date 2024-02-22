@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
 	timesorter.SetTimeWindow(timewindow);
 
 	HitBuilder hitbuilder;
-	hitbuilder.ReadMapFile("");
+	hitbuilder.ReadMapFile(mapfilename);
 
 
 	TFile *file = new TFile("output.root","recreate");
