@@ -15,7 +15,7 @@ ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
 		uint8_t isid = (*it_sig).sid;
 		uint8_t imid = (*it_sig).mid;
 		uint8_t ich = (*it_sig).ch;
-		uint8_t itype = map_type		[isid][imid][ich];
+		uint8_t itype = map_type		[isid][imid][ich]; if (itype==255) continue;
 		uint8_t idet  = map_det			[isid][imid][ich];
 		uint8_t iidx  = map_idx[itype]	[isid][imid][ich];
 		if (!isValid(itype,idet))

@@ -31,7 +31,6 @@ void HitBuilder::ReadMapFile(const char *filename)
 		exit(-6);
 	}
 	const int ndeci = 7;
-	//uint8_t a[ndeci];	// type det sid mid chL chU idx0
 	uint8_t chL, chU, idx0;
 	char line[100];
 	while (fgets(line, sizeof line, fr))
@@ -54,24 +53,6 @@ void HitBuilder::ReadMapFile(const char *filename)
 			}
 		}
 	}
-	/*
-	for (idet=0; idet<Ndet; idet++) for (ifv=0; ifv<Nfv; ifv++)
-	{
-		itype=0;
-		isid=idet/4; imid=idet%4+1; ich=ifv+0; 
-		map_type		[isid][imid][ich] = itype;
-		map_det			[isid][imid][ich] = idet;
-		map_idx[itype]	[isid][imid][ich] = ifv;
-	}
-	for (idet=0; idet<Ndet; idet++) for (iseg=0; iseg<Nseg; iseg++)
-	{
-		itype=1;
-		isid=idet/4; imid=idet%4+1; ich=iseg+2; 
-		map_type		[isid][imid][ich] = itype;
-		map_det			[isid][imid][ich] = idet;
-		map_idx[itype]	[isid][imid][ich] = iseg;
-	}
-	 */
 	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)
 	{
 		for(ich=0; ich<Nch; ich++)
