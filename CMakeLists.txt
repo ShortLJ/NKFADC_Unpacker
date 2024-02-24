@@ -1,6 +1,6 @@
 # CMakeLists.txt for event package. It creates a library with dictionary and a main program
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(ASGARD_Unpacker)
+project(STARKJR_Unpacker)
 
 # You need to tell CMake where to find the ROOT installation. This can be done in a number of ways:
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
@@ -28,25 +28,25 @@ target_link_libraries(TimeSorter Sig)
 add_library(HitBuilder SHARED src/HitBuilder.cxx inc/HitBuilder.h inc/Global.h)
 target_link_libraries(HitBuilder TimeSorter)
 
-add_library(FVHit SHARED src/FVHit.cxx inc/FVHit.h inc/Global.h)
-target_link_libraries(FVHit ${ROOT_LIBRARIES})
-add_library(SegHit SHARED src/SegHit.cxx inc/SegHit.h inc/Global.h)
-target_link_libraries(SegHit ${ROOT_LIBRARIES})
-add_library(CryHit SHARED src/CryHit.cxx inc/CryHit.h inc/Global.h)
-target_link_libraries(CryHit FVHit SegHit)
-target_link_libraries(CryHit ${ROOT_LIBRARIES})
-add_library(ASGARD_Event SHARED src/ASGARD_Event.cxx inc/ASGARD_Event.h inc/Global.h)
-target_link_libraries(ASGARD_Event ${ROOT_LIBRARIES})
-target_link_libraries(ASGARD_Event CryHit)
+add_library(OhmicHit SHARED src/OhmicHit.cxx inc/OhmicHit.h inc/Global.h)
+target_link_libraries(OhmicHit ${ROOT_LIBRARIES})
+add_library(StripHit SHARED src/StripHit.cxx inc/StripHit.h inc/Global.h)
+target_link_libraries(StripHit ${ROOT_LIBRARIES})
+add_library(X6Hit SHARED src/X6Hit.cxx inc/X6Hit.h inc/Global.h)
+target_link_libraries(X6Hit OhmicHit StripHit)
+target_link_libraries(X6Hit ${ROOT_LIBRARIES})
+add_library(STARKJR_Event SHARED src/STARKJR_Event.cxx inc/STARKJR_Event.h inc/Global.h)
+target_link_libraries(STARKJR_Event ${ROOT_LIBRARIES})
+target_link_libraries(STARKJR_Event X6Hit)
 
 
 
 
 #---Create  a main program using the library
-add_executable(ASGARD_Unpacker Unpacker.cpp)
-target_link_libraries(ASGARD_Unpacker HitBuilder)
-target_link_libraries(ASGARD_Unpacker ASGARD_Event)
-target_link_libraries(ASGARD_Unpacker ${ROOT_LIBRARIES})
+add_executable(STARKJR_Unpacker Unpacker.cpp)
+target_link_libraries(STARKJR_Unpacker HitBuilder)
+target_link_libraries(STARKJR_Unpacker STARKJR_Event)
+target_link_libraries(STARKJR_Unpacker ${ROOT_LIBRARIES})
 
-target_include_directories(ASGARD_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-ROOT_GENERATE_DICTIONARY(Event_dict MODULE ASGARD_Unpacker LINKDEF EventLinkDef.h)
+target_include_directories(STARKJR_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+ROOT_GENERATE_DICTIONARY(Event_dict MODULE STARKJR_Unpacker LINKDEF EventLinkDef.h)

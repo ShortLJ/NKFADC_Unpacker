@@ -14,12 +14,12 @@
 #include "Sig.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
-#include "ASGARD_Event.h"
+#include "STARKJR_Event.h"
 
 
 void print_usage()
 {
-	fprintf(stdout,"ASGARD_Unpacker \\\n");
+	fprintf(stdout,"STARKJR_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
 	fprintf(stdout,"--map,-m <file.txt>\\\n");
 	fprintf(stdout,"--timewindow,-tw <timewindow> ## 8 ns for NKfadc\\\n");
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
 
 	TFile *file = new TFile("output.root","recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
-	ASGARD_Event asgard_event = ASGARD_Event();
-	tree->Branch("ASGARD_Event", "ASGARD_Event", &asgard_event, 32000, 0 );
+	STARKJR_Event starkjr_event = STARKJR_Event();
+	tree->Branch("STARKJR_Event", "STARKJR_Event", &starkjr_event, 32000, 0 );
 
 
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 		size+=timesorter.FindSigWithLGT(minlgt);
 		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
 		
-		asgard_event = ASGARD_Event(v_sig_coin);
+		starkjr_event = STARKJR_Event(v_sig_coin);
 
 
 		//fprintf(stdout,"event.size() %d\n",event.size());

@@ -31,7 +31,6 @@ void HitBuilder::ReadMapFile(const char *filename)
 		exit(-6);
 	}
 	const int ndeci = 7;
-	//uint8_t a[ndeci];	// type det sid mid chL chU idx0
 	uint8_t chL, chU, idx0;
 	char line[100];
 	while (fgets(line, sizeof line, fr))
@@ -54,24 +53,6 @@ void HitBuilder::ReadMapFile(const char *filename)
 			}
 		}
 	}
-	/*
-	for (idet=0; idet<Ndet; idet++) for (ifv=0; ifv<Nfv; ifv++)
-	{
-		itype=0;
-		isid=idet/4; imid=idet%4+1; ich=ifv+0; 
-		map_type		[isid][imid][ich] = itype;
-		map_det			[isid][imid][ich] = idet;
-		map_idx[itype]	[isid][imid][ich] = ifv;
-	}
-	for (idet=0; idet<Ndet; idet++) for (iseg=0; iseg<Nseg; iseg++)
-	{
-		itype=1;
-		isid=idet/4; imid=idet%4+1; ich=iseg+2; 
-		map_type		[isid][imid][ich] = itype;
-		map_det			[isid][imid][ich] = idet;
-		map_idx[itype]	[isid][imid][ich] = iseg;
-	}
-	 */
 	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)
 	{
 		for(ich=0; ich<Nch; ich++)
@@ -133,8 +114,8 @@ bool HitBuilder::isvalid(uint8_t itype, uint8_t idet, uint8_t iidx )
 {
 	if (itype>=Ntype)	{fprintf(stderr,"itype%u>=Ntype%u\n", itype, Ntype); return 0;}
 	if (idet>=Ndet)	{fprintf(stderr,"idet%u>=Ndet%u\n", idet, Ndet); return 0;}
-	if (itype==0 && iidx>=Nfv)	{fprintf(stderr,"ifv%u>=Nfv%u\n", ifv, Nfv); return 0;}
-	if (itype==1 && iidx>=Nseg)	{fprintf(stderr,"iseg%u>=Nseg%u\n", iseg, Nseg); return 0;}
+	if (itype==0 && iidx>=Ntype0)	{fprintf(stderr,"iidx0%u>=Ntype0%u\n", iidx, Ntype0); return 0;}
+	if (itype==1 && iidx>=Ntype1)	{fprintf(stderr,"iidx%u>=Ntype1%u\n", iidx, Ntype1); return 0;}
 	return 1;
 }
 

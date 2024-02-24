@@ -1,7 +1,5 @@
 
-#define Ncry 4
-#define Nfv 2
-#define Nseg 8
+#include "Global.h"
 
 #include "NK.h"
 
@@ -14,23 +12,30 @@ void sample_spectrum_2d()
 	const Long64_t entries = nk->fChain->GetEntries();
 	const Long64_t permille = entries/1000;
 
-	uint8_t icry;
-	uint8_t ifv;
-	uint8_t iseg;
+	uint8_t ix6;
+	uint8_t iohmic;
+	uint8_t istrip;
 
 
-	TH2I *h2N_run_ADCfv;
-	TH2I *h2N_run_ADCseg;
-	h2N_run_ADCfv = new TH2I(
-				Form("h2N_run_ADCfv"),
-				Form("h2N_run_ADCfv; FV idx; ADC; count"),
-				Nfv*Ncry, 0, Nfv*Ncry,	
+	TH2I *h2N_run_ADCohmic;
+	TH2I *h2N_run_ADCstripU;
+	TH2I *h2N_run_ADCstripD;
+	h2N_run_ADCohmic = new TH2I(
+				Form("h2N_run_ADCohmic"),
+				Form("h2N_run_ADCohmic; Ohmic idx; ADC; count"),
+				Nohmic*Ndet, 0, Nohmic*Ndet,	
 				0x10000>>3, 0,0x10000);
-	h2N_run_ADCseg = new TH2I(
-				Form("h2N_run_ADCseg"),
-				Form("h2N_run_ADCseg; seg idx; ADC; count"),
-				Nseg*Ncry, 0, Nseg*Ncry,	
+	h2N_run_ADCstripU = new TH2I(
+				Form("h2N_run_ADCstripU"),
+				Form("h2N_run_ADCstripU; strip idx; ADC; count"),
+				Nstrip*Ndet/2, 0, Nstrip*Ndet/2,	
 				0x10000>>3, 0,0x10000);
+	h2N_run_ADCstripD = new TH2I(
+				Form("h2N_run_ADCstripD"),
+				Form("h2N_run_ADCstripD; strip idx; ADC; count"),
+				Nstrip*Ndet/2, 0, Nstrip*Ndet/2,	
+				0x10000>>3, 0,0x10000);
+
 
 
 
@@ -41,41 +46,47 @@ void sample_spectrum_2d()
 	{
 		nk->GetEntry(ient);
 
-		ASGARD_Event *asgard_event = nk->ASGARD_Event;
+		STARKJR_Event *starkjr_event = nk->STARKJR_Event;
 		
 
-		vector<CryHit>::iterator cryhit;
-		for (cryhit=asgard_event->v_cryhit.begin(); cryhit!=asgard_event->v_cryhit.end(); ++cryhit)
+		vector<X6Hit>::iterator x6hit;
+		for (x6hit=starkjr_event->v_x6hit.begin(); x6hit!=starkjr_event->v_x6hit.end(); ++x6hit)
 		{
-			icry = cryhit->pcry;
-			vector<FVHit>::iterator fvhit;
-			vector<SegHit>::iterator seghit;
-			for (fvhit=cryhit->v_fvhit.begin(); fvhit!=cryhit->v_fvhit.end(); ++fvhit)
+			ix6 = x6hit->det;
+			vector<OhmicHit>::iterator ohmichit;
+			vector<StripHit>::iterator striphit;
+			for (ohmichit=x6hit->v_ohmichit.begin(); ohmichit!=x6hit->v_ohmichit.end(); ++ohmichit)
 			{
-				ifv = fvhit->idx;
-				h2N_run_ADCfv->Fill(ifv+icry*Nfv, fvhit->peak);
+				iohmic = ohmichit->idx;
+				h2N_run_ADCohmic->Fill(iohmic+ix6*Nohmic, ohmichit->peak);
 			}
-			for (seghit=cryhit->v_seghit.begin(); seghit!=cryhit->v_seghit.end(); ++seghit)
+			for (striphit=x6hit->v_strpUhit.begin(); striphit!=x6hit->v_strpUhit.end(); ++striphit)
 			{
-				iseg = seghit->idx;
-				h2N_run_ADCseg->Fill(iseg+icry*Nseg, seghit->peak);
+				istrip = striphit->idx;
+				h2N_run_ADCstripU->Fill(istrip+ix6*Nstrip/2, striphit->peak);
 			}
-	
+			for (striphit=x6hit->v_strpDhit.begin(); striphit!=x6hit->v_strpDhit.end(); ++striphit)
+			{
+				istrip = striphit->idx;
+				h2N_run_ADCstripD->Fill(istrip+ix6*Nstrip/2, striphit->peak);
+			}
 		}
-
-
-
 	}
 	
 	TVirtualPad *pad;
-	TCanvas *c1 = new TCanvas("c1_FV","c1_FV",1200,800);
+	TCanvas *c1 = new TCanvas("c1_Ohmic","c1_Ohmic",1200,800);
 	pad = c1->cd();
-	h2N_run_ADCfv->Draw("colz");
+	h2N_run_ADCohmic->Draw("colz");
 
 
-	TCanvas *c2 = new TCanvas("c2_Seg","c2_Seg",1200,800);
+	TCanvas *c2 = new TCanvas("c2_StripU","c2_StripU",1200,800);
 	pad = c2->cd();
-	h2N_run_ADCseg->Draw("colz");
+	h2N_run_ADCstripU->Draw("colz");
+
+	TCanvas *c3 = new TCanvas("c3_StripD","c3_StripD",1200,800);
+	pad = c3->cd();
+	h2N_run_ADCstripD->Draw("colz");
+
 
 
 }

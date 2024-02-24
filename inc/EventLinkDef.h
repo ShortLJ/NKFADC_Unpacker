@@ -1,19 +1,19 @@
 #include "Sig.h"
-#include "FVHit.h"
-#include "SegHit.h"
-#include "CryHit.h"
-#include "ASGARD_Event.h"
+#include "OhmicHit.h"
+#include "StripHit.h"
+#include "X6Hit.h"
+#include "STARKJR_Event.h"
 
 #ifdef __CLING__
 #pragma link C++ nestedclasses;
 #pragma link C++ nestedtypedefs;
 #pragma link C++ class Sig+;
 #pragma link C++ class vector<Sig>+;
-#pragma link C++ class FVHit+;
-#pragma link C++ class vector<FVHit>+;
-#pragma link C++ class SegHit+;
-#pragma link C++ class vector<SegHit>+;
-#pragma link C++ class CryHit+;
-#pragma link C++ class vector<CryHit>+;
-#pragma link C++ class ASGARD_Event+;
+#pragma link C++ class OhmicHit+;
+#pragma link C++ class vector<OhmicHit>+;
+#pragma link C++ class StripHit+;
+#pragma link C++ class vector<StripHit>+;
+#pragma link C++ class X6Hit+;
+#pragma link C++ class vector<X6Hit>+;
+#pragma link C++ class STARKJR_Event+;
 #endif
