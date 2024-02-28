@@ -19,16 +19,16 @@ void sample_spectrum_2d()
 	uint8_t iseg;
 
 
-	TH2I *h2N_run_ADCfv;
-	TH2I *h2N_run_ADCseg;
-	h2N_run_ADCfv = new TH2I(
-				Form("h2N_run_ADCfv"),
-				Form("h2N_run_ADCfv; FV idx; ADC; count"),
+	TH2I *h2N_idx_ADCfv;
+	TH2I *h2N_idx_ADCseg;
+	h2N_idx_ADCfv = new TH2I(
+				Form("h2N_idx_ADCfv"),
+				Form("h2N_idx_ADCfv; FV idx; ADC; count"),
 				Nfv*Ncry, 0, Nfv*Ncry,	
 				0x10000>>3, 0,0x10000);
-	h2N_run_ADCseg = new TH2I(
-				Form("h2N_run_ADCseg"),
-				Form("h2N_run_ADCseg; seg idx; ADC; count"),
+	h2N_idx_ADCseg = new TH2I(
+				Form("h2N_idx_ADCseg"),
+				Form("h2N_idx_ADCseg; seg idx; ADC; count"),
 				Nseg*Ncry, 0, Nseg*Ncry,	
 				0x10000>>3, 0,0x10000);
 
@@ -53,12 +53,12 @@ void sample_spectrum_2d()
 			for (fvhit=cryhit->v_fvhit.begin(); fvhit!=cryhit->v_fvhit.end(); ++fvhit)
 			{
 				ifv = fvhit->idx;
-				h2N_run_ADCfv->Fill(ifv+icry*Nfv, fvhit->peak);
+				h2N_idx_ADCfv->Fill(ifv+icry*Nfv, fvhit->peak);
 			}
 			for (seghit=cryhit->v_seghit.begin(); seghit!=cryhit->v_seghit.end(); ++seghit)
 			{
 				iseg = seghit->idx;
-				h2N_run_ADCseg->Fill(iseg+icry*Nseg, seghit->peak);
+				h2N_idx_ADCseg->Fill(iseg+icry*Nseg, seghit->peak);
 			}
 	
 		}
@@ -70,12 +70,12 @@ void sample_spectrum_2d()
 	TVirtualPad *pad;
 	TCanvas *c1 = new TCanvas("c1_FV","c1_FV",1200,800);
 	pad = c1->cd();
-	h2N_run_ADCfv->Draw("colz");
+	h2N_idx_ADCfv->Draw("colz");
 
 
 	TCanvas *c2 = new TCanvas("c2_Seg","c2_Seg",1200,800);
 	pad = c2->cd();
-	h2N_run_ADCseg->Draw("colz");
+	h2N_idx_ADCseg->Draw("colz");
 
 
 }
