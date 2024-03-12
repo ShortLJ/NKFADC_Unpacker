@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
 	while(!timesorter.AllEmpty())
 	{
 		timesorter.ClearCoinSig();
-		hitbuilder.Clear();
+		//hitbuilder.Clear();
 
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;

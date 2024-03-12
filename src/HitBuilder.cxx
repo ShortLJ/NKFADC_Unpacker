@@ -56,7 +56,7 @@ void HitBuilder::ReadMapFile(const char *filename)
 	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)
 	{
 		for(ich=0; ich<Nch; ich++)
-			fprintf(stdout,"%u\t",map_det       [isid][imid][ich]);
+			fprintf(stdout,"%u\t",map_idx[1]       [isid][imid][ich]);
 		fprintf(stdout,"\n");
 	}
 }
@@ -115,7 +115,7 @@ bool HitBuilder::isvalid(uint8_t itype, uint8_t idet, uint8_t iidx )
 	if (itype>=Ntype)	{fprintf(stderr,"itype%u>=Ntype%u\n", itype, Ntype); return 0;}
 	if (idet>=Ndet)	{fprintf(stderr,"idet%u>=Ndet%u\n", idet, Ndet); return 0;}
 	if (itype==0 && iidx>=Ntype0)	{fprintf(stderr,"iidx0%u>=Ntype0%u\n", iidx, Ntype0); return 0;}
-	if (itype==1 && iidx>=Ntype1)	{fprintf(stderr,"iidx%u>=Ntype1%u\n", iidx, Ntype1); return 0;}
+	if (itype==1 && iidx>=Ntype1)	{fprintf(stderr,"iidx1%u>=Ntype1%u\n", iidx, Ntype1); return 0;}
 	return 1;
 }
 
