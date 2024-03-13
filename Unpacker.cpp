@@ -22,12 +22,14 @@ void print_usage()
 	fprintf(stdout,"STARKJR_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
 	fprintf(stdout,"--map,-m <file.txt>\\\n");
+	fprintf(stdout,"--output,-o <file.root>\\\n");
 	fprintf(stdout,"--timewindow,-tw <timewindow> ## 8 ns for NKfadc\\\n");
 }
 
 int main(int argc, char *argv[])
 {
 	char *inputfilename;
+	char *outputfilename;
 	char *mapfilename;
  	int64_t timewindow = 0;
 
@@ -43,6 +45,10 @@ int main(int argc, char *argv[])
 		if ((strcmp(argv[i],"--input")==0 || strcmp(argv[i],"-i")==0) && (argv[i+1]))
 		{
 			inputfilename = argv[++i];
+		}
+		else if ((strcmp(argv[i],"--output")==0 || strcmp(argv[i],"-o")==0) && (argv[i+1]))
+		{
+			outputfilename = argv[++i];
 		}
 		else if ((strcmp(argv[i],"--map")==0 || strcmp(argv[i],"-m")==0) && (argv[i+1]))
 		{
