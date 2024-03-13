@@ -21,8 +21,8 @@ void print_usage()
 {
 	fprintf(stdout,"STARKJR_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
-	fprintf(stdout,"--map,-m <file.txt>\\\n");
 	fprintf(stdout,"--output,-o <file.root>\\\n");
+	fprintf(stdout,"--map,-m <file.txt>\\\n");
 	fprintf(stdout,"--timewindow,-tw <timewindow> ## 8 ns for NKfadc\\\n");
 }
 
@@ -71,13 +71,11 @@ int main(int argc, char *argv[])
 			return -1;
 		}
 	}
-//	memo for sid mapping parser
-// int sid[4] = {2,4,6,8};
-// int iii[128]
-// for(int i=0; i<4; i++){ iii[sid[i]]=i; }
-//
-
-
+	if (inputfilename==NULL || outputfilename==NULL)
+	{
+		fprintf(stderr,"Specify input file name and output file name\n");
+		return -1;
+	}
 
 	TimeSorter timesorter(inputfilename);
 	timesorter.SetTimeWindow(timewindow);
@@ -86,7 +84,7 @@ int main(int argc, char *argv[])
 	hitbuilder.ReadMapFile(mapfilename);
 
 
-	TFile *file = new TFile("output.root","recreate");
+	TFile *file = new TFile(outputfilename,"recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
 	STARKJR_Event starkjr_event = STARKJR_Event();
 	tree->Branch("STARKJR_Event", "STARKJR_Event", &starkjr_event, 32000, 0 );
