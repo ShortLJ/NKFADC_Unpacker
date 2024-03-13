@@ -6,7 +6,7 @@
 void sample_spectrum_2d_sumdiff()
 {
 	TChain *chain  = new TChain("nkfadc");
-	chain->Add("output.root");
+	chain->Add("../output.root");
 	NK *nk = new NK(chain);
 
 	const Long64_t entries = nk->fChain->GetEntries();
@@ -60,12 +60,16 @@ void sample_spectrum_2d_sumdiff()
 				iohmic = ohmichit->idx;
 				h2N_idx_ADCohmic->Fill(iohmic+ix6*Nohmic, ohmichit->peak);
 			}
-			for (stripU=x6hit->v_strpUhit.begin(); stripU!=x6hit->v_strpUhit.end(); ++stripU)	for (stripD=x6hit->v_strpDhit.begin(); stripD!=x6hit->v_strpDhit.end(); ++stripD) if (stripU!=stripD)
+			for (stripU=x6hit->v_strpUhit.begin(); stripU!=x6hit->v_strpUhit.end(); ++stripU)	for (stripD=x6hit->v_strpDhit.begin(); stripD!=x6hit->v_strpDhit.end(); ++stripD)
 			{
 				istrip = stripU->idx;
 				jstrip = stripD->idx;
-				h2N_idx_ADCstripSum->Fill(istrip+ix6*Nstrip/2, (stripU->peak + stripD->peak));
-				h2N_idx_ADCstripDiff->Fill(istrip+ix6*Nstrip/2, (stripU->peak - stripD->peak));
+				if (istrip==jstrip)
+				{
+					fprintf(stdout,"aa\n");
+					h2N_idx_ADCstripSum->Fill(istrip+ix6*Nstrip/2, (stripU->peak + stripD->peak));
+					h2N_idx_ADCstripDiff->Fill(istrip+ix6*Nstrip/2, (stripU->peak - stripD->peak));
+				}
 			}
 		}
 	}
