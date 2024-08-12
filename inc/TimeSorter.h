@@ -13,10 +13,12 @@ using namespace std;
 class TimeSorter
 {
 	public:
-		TimeSorter(char *);
+		TimeSorter();
 		~TimeSorter();
 
-		int ReadAndFillQ();
+		void Push(Sig sig);
+		uint32_t Pop(uint8_t sid, uint8_t mid, uint8_t ch);
+		Sig Top(uint8_t sid, uint8_t mid, uint8_t ch);
 		void PrintSize();
 		bool AllEmpty();
 
@@ -30,21 +32,13 @@ class TimeSorter
 
 
 	private:
-		FILE *fp;
-		int file_size;
-		int data_read;
-		uint8_t data[8192];
-		uint8_t data_length;
 		Sig sig_tmp;
 
 		priority_queue<Sig> q_sig[Nsid][Nmid][Nch];
 		uint8_t isid; uint8_t imid; uint8_t ich;
 	
-		uint32_t Pop(uint8_t sid, uint8_t mid, uint8_t ch);
 		bool Empty(uint8_t sid, uint8_t mid, uint8_t ch);
-		void Push(Sig sig);
 		uint32_t Size(uint8_t sid, uint8_t mid, uint8_t ch);
-		Sig Top(uint8_t sid, uint8_t mid, uint8_t ch);
 		virtual void Clear();
 		void PrintTopAll();
 		void PrintTop(uint8_t sid, uint8_t mid, uint8_t ch);

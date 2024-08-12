@@ -12,6 +12,7 @@
 #include "TTree.h"
 
 #include "Sig.h"
+#include "FileReader.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
 #include "ASGARD_Event.h"
@@ -77,7 +78,20 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	TimeSorter timesorter(inputfilename);
+	vector<char*> v_inputfilename;
+	v_inputfilename.push_back("../../sample_data/Run0000/FADC0.dat");
+	v_inputfilename.push_back("../../sample_data/Run0000/FADC1.dat");
+
+	FileReader *filereader[Nsid];
+	for (int isid=0; isid<Nsid; isid++)
+	{
+		filereader[isid] = new FileReader(v_inputfilename.at(isid),2);
+	}
+
+	//FileReader filereader(inputfilename,2);
+	TimeSorter timesorter;
+	for (int isid=0; isid<Nsid; isid++)
+		filereader[isid]->RegisterTimeSorter(&timesorter);
 	timesorter.SetTimeWindow(timewindow);
 
 	HitBuilder hitbuilder;
@@ -91,7 +105,8 @@ int main(int argc, char *argv[])
 
 
 
-	timesorter.ReadAndFillQ();
+	for (int isid=0; isid<Nsid; isid++)
+		filereader[isid]->ReadLoop();
 	timesorter.PrintSize();
 
 	while(!timesorter.AllEmpty())
@@ -101,8 +116,9 @@ int main(int argc, char *argv[])
 
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;
-		size+=timesorter.FindSigWithLGT(minlgt);
-		size+=timesorter.FindSigWithLGT(minlgt);
+		while (int ret=timesorter.FindSigWithLGT(minlgt)) {size+=ret;}
+		//size+=timesorter.FindSigWithLGT(minlgt);
+		//size+=timesorter.FindSigWithLGT(minlgt);
 		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
 		
 		asgard_event = ASGARD_Event(v_sig_coin);
