@@ -25,6 +25,8 @@ add_library(Sig SHARED src/Sig.cxx inc/Sig.h)
 
 add_library(TimeSorter SHARED src/TimeSorter.cxx inc/TimeSorter.h inc/Global.h)
 target_link_libraries(TimeSorter Sig)
+add_library(FileReader SHARED src/FileReader.cxx inc/FileReader.h inc/Global.h)
+target_link_libraries(FileReader Sig TimeSorter)
 add_library(HitBuilder SHARED src/HitBuilder.cxx inc/HitBuilder.h inc/Global.h)
 target_link_libraries(HitBuilder TimeSorter)
 
@@ -44,9 +46,11 @@ target_link_libraries(ASGARD_Event CryHit)
 
 #---Create  a main program using the library
 add_executable(ASGARD_Unpacker Unpacker.cpp)
+target_link_libraries(ASGARD_Unpacker FileReader)
 target_link_libraries(ASGARD_Unpacker HitBuilder)
 target_link_libraries(ASGARD_Unpacker ASGARD_Event)
 target_link_libraries(ASGARD_Unpacker ${ROOT_LIBRARIES})
 
 target_include_directories(ASGARD_Unpacker PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 ROOT_GENERATE_DICTIONARY(Event_dict MODULE ASGARD_Unpacker LINKDEF EventLinkDef.h)
+add_library(ASGARDEvent_dict SHARED ${PROJECT_SOURCE_DIR}/inc/ASGARD_Event.h  Event_dict.cxx)
