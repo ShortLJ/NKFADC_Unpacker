@@ -1,11 +1,11 @@
 
 #include <stdlib.h>
 
-#include "ASGARD_Event.h"
+#include "Skel_Event.h"
 
-ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
+Skel_Event::Skel_Event(vector<Sig> v_sigs)
 {
-	v_cryhit.clear();
+	v_singlehit.clear();
 
 	vector<Sig> v_sig_sort[Ntype][Ndet];
 
@@ -20,7 +20,7 @@ ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
 		uint8_t iidx  = map_idx[itype]	[isid][imid][ich];
 		if (!isValid(itype,idet))
 		{
-			fprintf(stderr,"ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs): not valid\n");
+			fprintf(stderr,"Skel_Event::Skel_Event(vector<Sig> v_sigs): not valid\n");
 			exit(-10);
 		}
 		v_sig_sort[itype][idet].push_back(*it_sig);
@@ -29,13 +29,13 @@ ASGARD_Event::ASGARD_Event(vector<Sig> v_sigs)
 	{
 		if (v_sig_sort[0][idet].size()+v_sig_sort[1][idet].size()>0)
 		{
-			CryHit cryhit = CryHit(idet,v_sig_sort[0][idet],v_sig_sort[1][idet]);
-			v_cryhit.push_back(cryhit);
+			SingleHit singlehit = SingleHit(idet,v_sig_sort[0][idet]/*,v_sig_sort[1][idet]*/);
+			v_singlehit.push_back(singlehit);
 		}
 	}
 }
 
-bool ASGARD_Event::isValid(uint8_t itype, uint8_t idet)
+bool Skel_Event::isValid(uint8_t itype, uint8_t idet)
 {
 	if (itype>=Ntype)	{fprintf(stderr,"itype%u>=Ntype%u\n", itype, Ntype); return 0;}
 	if (idet>=Ndet)	{fprintf(stderr,"idet%u>=Ndet%u\n", idet, Ndet); return 0;}

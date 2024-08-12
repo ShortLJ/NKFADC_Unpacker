@@ -76,7 +76,7 @@ void HitBuilder::SortByDet(vector<Sig> v_sig_coin)
 		if(!isvalid(itype, idet, iidx))
 		{
 			fprintf(stderr,"HitBuilder::SortByDet(vector<Sig> v_sig_coin): not valid\n");
-			fprintf(stderr, "HitBuilder::SortByDet(vector<Sig> v_sig_coin): sid %u mid %u ch %u itype %u idet %u iidx %u\n",
+			fprintf(stderr,"HitBuilder::SortByDet(vector<Sig> v_sig_coin): sid %u mid %u ch %u itype %u idet %u iidx %u\n",
 					isid, imid, ich, itype, idet, iidx);
 			return;
 		}
@@ -91,9 +91,9 @@ int HitBuilder::Size(uint8_t itype, uint8_t idet)
 
 
 
-/*CryHit HitBuilder::GetCryHit(uint8_t idet)
+/*SingleHit HitBuilder::GetSingleHit(uint8_t idet)
 {
-	CryHit tmp(idet,v_sig[idet][0], v_sig[idet][1]);
+	SingleHit tmp(idet,v_sig[idet][0], v_sig[idet][1]);
 	return tmp;
 }*/
 
@@ -114,8 +114,8 @@ bool HitBuilder::isvalid(uint8_t itype, uint8_t idet, uint8_t iidx )
 {
 	if (itype>=Ntype)	{fprintf(stderr,"itype%u>=Ntype%u\n", itype, Ntype); return 0;}
 	if (idet>=Ndet)	{fprintf(stderr,"idet%u>=Ndet%u\n", idet, Ndet); return 0;}
-	if (itype==0 && iidx>=Nfv)	{fprintf(stderr,"ifv%u>=Nfv%u\n", ifv, Nfv); return 0;}
-	if (itype==1 && iidx>=Nseg)	{fprintf(stderr,"iseg%u>=Nseg%u\n", iseg, Nseg); return 0;}
+	if (itype==0 && iidx>=Ndet1)	{fprintf(stderr,"idet1%u>=Ndet1%u\n", idet1, Ndet1); return 0;}
+	//if (itype==1 && iidx>=Ndet2)	{fprintf(stderr,"idet2%u>=Ndet2%u\n", idet2, Ndet2); return 0;}
 	return 1;
 }
 

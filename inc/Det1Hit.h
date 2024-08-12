@@ -1,12 +1,12 @@
 #include "Global.h"
 #include "Sig.h"
 
-#ifndef __SEGHIT__
-#define __SEGHIT__
+#ifndef __DET1HIT__
+#define __DET1HIT__
 
 using namespace std;
 
-class SegHit : public Sig
+class Det1Hit : public Sig
 {
 	public:
 		uint8_t det;
@@ -16,10 +16,10 @@ class SegHit : public Sig
 
 		float Energy; // 32 bit: 1bit sign, 8bit exponent, 23bit fraction > 16 bit ADC
 
-		SegHit(){	};
-		SegHit(Sig sig);
-		SegHit(uint8_t det, uint8_t idx, Sig sig);
-		~SegHit(){	};
+		Det1Hit(){	};
+		Det1Hit(Sig sig);
+		Det1Hit(uint8_t det, uint8_t idx, Sig sig);
+		~Det1Hit(){	};
 
 		void Clear();
 
@@ -41,7 +41,7 @@ class SegHit : public Sig
 
 
 
-#endif // __SEGHIT__
+#endif // __DET1HIT__
 
 
 
