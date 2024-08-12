@@ -15,12 +15,12 @@
 #include "FileReader.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
-#include "ASGARD_Event.h"
+#include "Skel_Event.h"
 
 
 void print_usage()
 {
-	fprintf(stdout,"ASGARD_Unpacker \\\n");
+	fprintf(stdout,"Skel_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
 	fprintf(stdout,"--output,-o <file.root>\\\n");
 	fprintf(stdout,"--map,-m <file.txt>\\\n");
@@ -78,14 +78,14 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	vector<char*> v_inputfilename;
+	vector<char*> v_inputfilename; ///// TODO: need to implement List reader 
 	v_inputfilename.push_back("../../sample_data/Run0000/FADC0.dat");
 	v_inputfilename.push_back("../../sample_data/Run0000/FADC1.dat");
 
 	FileReader *filereader[Nsid];
 	for (int isid=0; isid<Nsid; isid++)
 	{
-		filereader[isid] = new FileReader(v_inputfilename.at(isid),2);
+		filereader[isid] = new FileReader(v_inputfilename.at(isid),2); // int type; // MTE, TCB, FADC
 	}
 
 	//FileReader filereader(inputfilename,2);
@@ -100,8 +100,8 @@ int main(int argc, char *argv[])
 
 	TFile *file = new TFile(outputfilename,"recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
-	ASGARD_Event asgard_event = ASGARD_Event();
-	tree->Branch("ASGARD_Event", "ASGARD_Event", &asgard_event, 32000, 0 );
+	Skel_Event asgard_event = Skel_Event();
+	tree->Branch("Skel_Event", "Skel_Event", &asgard_event, 32000, 0 );
 
 
 
@@ -117,11 +117,9 @@ int main(int argc, char *argv[])
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;
 		while (int ret=timesorter.FindSigWithLGT(minlgt)) {size+=ret;}
-		//size+=timesorter.FindSigWithLGT(minlgt);
-		//size+=timesorter.FindSigWithLGT(minlgt);
 		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
 		
-		asgard_event = ASGARD_Event(v_sig_coin);
+		asgard_event = Skel_Event(v_sig_coin);
 
 
 		//fprintf(stdout,"event.size() %d\n",event.size());
