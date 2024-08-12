@@ -12,14 +12,15 @@
 #include "TTree.h"
 
 #include "Sig.h"
+#include "FileReader.h"
 #include "TimeSorter.h"
 #include "HitBuilder.h"
-#include "ASGARD_Event.h"
+#include "NaI_Event.h"
 
 
 void print_usage()
 {
-	fprintf(stdout,"ASGARD_Unpacker \\\n");
+	fprintf(stdout,"NaI_Unpacker \\\n");
 	fprintf(stdout,"--input,-i <file.dat>\\\n");
 	fprintf(stdout,"--output,-o <file.root>\\\n");
 	fprintf(stdout,"--map,-m <file.txt>\\\n");
@@ -77,7 +78,20 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	TimeSorter timesorter(inputfilename);
+	vector<char*> v_inputfilename;
+	v_inputfilename.push_back("../../sample_data/Run0000/FADC0.dat");
+	v_inputfilename.push_back("../../sample_data/Run0000/FADC1.dat");
+
+	FileReader *filereader[Nsid];
+	for (int isid=0; isid<Nsid; isid++)
+	{
+		filereader[isid] = new FileReader(v_inputfilename.at(isid),2);
+	}
+
+	//FileReader filereader(inputfilename,2);
+	TimeSorter timesorter;
+	for (int isid=0; isid<Nsid; isid++)
+		filereader[isid]->RegisterTimeSorter(&timesorter);
 	timesorter.SetTimeWindow(timewindow);
 
 	HitBuilder hitbuilder;
@@ -86,12 +100,13 @@ int main(int argc, char *argv[])
 
 	TFile *file = new TFile(outputfilename,"recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
-	ASGARD_Event asgard_event = ASGARD_Event();
-	tree->Branch("ASGARD_Event", "ASGARD_Event", &asgard_event, 32000, 0 );
+	NaI_Event nai_event = NaI_Event();
+	tree->Branch("NaI_Event", "NaI_Event", &nai_event, 32000, 0 );
 
 
 
-	timesorter.ReadAndFillQ();
+	for (int isid=0; isid<Nsid; isid++)
+		filereader[isid]->ReadLoop();
 	timesorter.PrintSize();
 
 	while(!timesorter.AllEmpty())
@@ -101,11 +116,12 @@ int main(int argc, char *argv[])
 
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;
-		size+=timesorter.FindSigWithLGT(minlgt);
-		size+=timesorter.FindSigWithLGT(minlgt);
+		while (int ret=timesorter.FindSigWithLGT(minlgt)) {size+=ret;}
+		//size+=timesorter.FindSigWithLGT(minlgt);
+		//size+=timesorter.FindSigWithLGT(minlgt);
 		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
 		
-		asgard_event = ASGARD_Event(v_sig_coin);
+		nai_event = NaI_Event(v_sig_coin);
 
 
 		//fprintf(stdout,"event.size() %d\n",event.size());

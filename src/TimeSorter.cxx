@@ -1,69 +1,20 @@
 
-#include <stdio.h>
-#include <stdint.h>
+//#include <stdio.h>
+//#include <stdint.h>
 #include <stdlib.h>
 
 #include "TimeSorter.h"
 
 
 
-TimeSorter::TimeSorter(char *inputfilename)
+TimeSorter::TimeSorter()
 {
-	fp = fopen(inputfilename,"rb");
-	if (fp==NULL)
-	{
-		fprintf(stderr,"No file named \"%s\"\n",inputfilename);
-		exit(-2);
-	}
-	fseek(fp, 0L, SEEK_END);
-	file_size = ftell(fp);
-	fprintf(stdout, "Opened innput File: \"%s\" (%d Bytes)\n",inputfilename, file_size);
-	if (file_size<0)
-	{
-		fprintf(stderr, "file size is larger than 2GB\n");
-		exit(-3);
-	}
-	fseek(fp, 0, SEEK_SET);
-	data_read=0;
 }
 
 
 
 TimeSorter::~TimeSorter()
 {
-	fclose(fp);
-}
-
-int TimeSorter::ReadAndFillQ()
-{
-	int evt_processed = 0;
-	while (data_read < file_size)
-	{
-		//fprintf(stdout, "data_reading after = %d/%d\n", data_read, file_size);
-		data_read += fread(data, 1, 32, fp);
-		data_length = data[0] & 0x00FF;
-		if (data_length != 32) 
-		{
-			fprintf(stderr, "\ndata_length %u!=32\n data_read += fread(data, 1, 8160, fp);\n",data_length);
-			data_read += fread(data, 1, 8160, fp);
-		}      
-		else
-		{
-			sig_tmp = Sig(data);
-		}
-		fprintf(stdout, "\rdata_read to= %d/%d\t", data_read, file_size);
-
-		Push(sig_tmp);
-		evt_processed++;
-		fprintf(stdout,"evt_processed %d", evt_processed);
-		fflush(stdout);
-
-
-	}
-	fprintf(stdout,"\n");
-	fprintf(stdout,"\n");
-
-	return evt_processed;
 }
 
 bool TimeSorter::AllEmpty()

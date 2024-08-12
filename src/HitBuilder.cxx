@@ -68,7 +68,7 @@ void HitBuilder::SortByDet(vector<Sig> v_sig_coin)
 	vector<Sig>::iterator it_sig;
 	for (it_sig=v_sig_coin.begin(); it_sig!=v_sig_coin.end(); it_sig++)
 	{
-		isid = (*it_sig).sid; imid = (*it_sig).mid; ich = (*it_sig).ch;
+		isid = it_sig->sid; imid = it_sig->mid; ich = it_sig->ch;
 		itype = map_type		[isid][imid][ich];
 		idet  = map_det			[isid][imid][ich];
 		iidx  = map_idx[itype]	[isid][imid][ich];
