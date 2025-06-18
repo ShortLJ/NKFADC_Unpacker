@@ -4,13 +4,13 @@
 Det1Hit::Det1Hit(Sig sig)
 	: Sig(sig)
 {
-	uint8_t itype = map_type[sig.sid][sig.mid][sig.ch];
-	det=map_det[sig.sid][sig.mid][sig.ch];
+	uint8_t itype = map_type[sig.sid][sig.mid][sig.cha];
+	det=map_det[sig.sid][sig.mid][sig.cha];
 	pdet = det;
 	pcry = 0;
 	//pdet = det >> 2; // clover number
 	//pcry = det & 0x03; // crystal idx
-	idx=map_idx[itype][sig.sid][sig.mid][sig.ch];
+	idx=map_idx[itype][sig.sid][sig.mid][sig.cha];
 	Energy=0;
 
 }

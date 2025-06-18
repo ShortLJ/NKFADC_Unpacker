@@ -14,10 +14,10 @@ Skel_Event::Skel_Event(vector<Sig> v_sigs)
 	{
 		uint8_t isid = (*it_sig).sid;
 		uint8_t imid = (*it_sig).mid;
-		uint8_t ich = (*it_sig).ch;
-		uint8_t itype = map_type		[isid][imid][ich]; if (itype==255) continue;
-		uint8_t idet  = map_det			[isid][imid][ich];
-		uint8_t iidx  = map_idx[itype]	[isid][imid][ich];
+		uint8_t icha = (*it_sig).cha;
+		uint8_t itype = map_type		[isid][imid][icha]; if (itype==255) continue;
+		uint8_t idet  = map_det			[isid][imid][icha];
+		uint8_t iidx  = map_idx[itype]	[isid][imid][icha];
 		if (!isValid(itype,idet))
 		{
 			fprintf(stderr,"Skel_Event::Skel_Event(vector<Sig> v_sigs): not valid\n");

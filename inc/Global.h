@@ -11,7 +11,7 @@
 //// used
 #define Nsid 2
 #define Nmid 10
-#define Nch 10
+#define Ncha 10
 
 #define Ndet 4 // 4 bunch x 1 det/bunch
 #define Ntype 1 // Det1 .... DetN for each det

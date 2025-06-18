@@ -37,7 +37,7 @@ class HitBuilder
 		uint8_t itype; 
 		uint8_t idet; uint8_t iidx;
 		uint8_t idet1; /*uint8_t idet2;*/
-		uint8_t isid; uint8_t imid; uint8_t ich;
+		uint8_t isid; uint8_t imid; uint8_t icha;
 
 		bool isvalid(uint8_t, uint8_t,uint8_t);
 		
