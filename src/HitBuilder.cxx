@@ -31,21 +31,21 @@ void HitBuilder::ReadMapFile(const char *filename)
 		exit(-6);
 	}
 	const int ndeci = 7;
-	uint8_t chL, chU, idx0;
+	uint8_t chaL, chaU, idx0;
 	char line[100];
 	while (fgets(line, sizeof line, fr))
 	{
 		if (*line == '#') continue;
 		if (sscanf(line, "%hhu %hhu %hhu %hhu %hhu %hhu %hhu",
-			&itype,&idet,&isid,&imid,&chL,&chU,&idx0) !=ndeci)
+			&itype,&idet,&isid,&imid,&chaL,&chaU,&idx0) !=ndeci)
 		{
 			fprintf(stderr,"failed to read map file\n");
 			exit(-7);
 		}
 		else
 		{
-			fprintf(stdout,"%u %u %u %u %u %u %u\n",itype,idet,isid,imid,chL,chU,idx0);
-			for (icha=chL; icha<=chU; icha++)
+			fprintf(stdout,"%u %u %u %u %u %u %u\n",itype,idet,isid,imid,chaL,chaU,idx0);
+			for (icha=chaL; icha<=chaU; icha++)
 			{
 				map_type		[isid][imid][icha] = itype;
 				map_det			[isid][imid][icha] = idet;
