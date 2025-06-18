@@ -4,11 +4,11 @@
 FVHit::FVHit(Sig sig)
 	: Sig(sig)
 {
-	uint8_t itype = map_type[sig.sid][sig.mid][sig.ch];
-	det=map_det[sig.sid][sig.mid][sig.ch];
+	uint8_t itype = map_type[sig.sid][sig.mid][sig.cha];
+	det=map_det[sig.sid][sig.mid][sig.cha];
 	pdet = det >> 2;
 	pcry = det & 0x03;
-	idx=map_idx[itype][sig.sid][sig.mid][sig.ch];
+	idx=map_idx[itype][sig.sid][sig.mid][sig.cha];
 	Energy=0;
 
 }

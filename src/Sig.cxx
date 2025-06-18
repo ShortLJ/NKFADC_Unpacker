@@ -44,8 +44,8 @@ Sig::Sig(uint8_t *data)
 	mid = data[10] & 0x0F;
 	sid = (data[10] & 0x70) >> 4;
 
-	ch = data[11] & 0xFF;
-	ch = ch-1;
+	cha = data[11] & 0xFF;
+	cha = cha-1;
 
 	local_trigger_number = 0;
 	itmp = data[12] & 0xFF;
@@ -130,7 +130,7 @@ void Sig::Print()
 {
 	fprintf(stdout,"ttn %u\t",tcb_trigger_number);
 	fprintf(stdout,"ltn %u\t",local_trigger_number);
-	fprintf(stdout,"sid %u mid %u ch %u\t",sid,mid,ch);
+	fprintf(stdout,"sid %u mid %u cha %u\t",sid,mid,cha);
 	fprintf(stdout,"ttt %lu\t",tcb_trigger_time);
 	fprintf(stdout,"lgt %lu\t",local_gate_time);
 	fprintf(stdout,"ltp %u\t",local_trigger_pattern);
@@ -144,7 +144,7 @@ void Sig::Print()
 {
 	fprintf(stdout,"tcb_trigger_number %u\t",tcb_trigger_number);
 	fprintf(stdout,"local_trigger_number %u\t",local_trigger_number);
-	fprintf(stdout,"sid %u mid %u ch %u\t",sid,mid,ch);
+	fprintf(stdout,"sid %u mid %u cha %u\t",sid,mid,cha);
 	fprintf(stdout,"tcb_trigger_time %lu\t",tcb_trigger_time);
 	fprintf(stdout,"local_gate_time %lu\n",local_gate_time);
 	fprintf(stdout,"local_gate_time %lu\n",local_gate_time);

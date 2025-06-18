@@ -17,8 +17,8 @@ class TimeSorter
 		~TimeSorter();
 
 		void Push(Sig sig);
-		uint32_t Pop(uint8_t sid, uint8_t mid, uint8_t ch);
-		Sig Top(uint8_t sid, uint8_t mid, uint8_t ch);
+		uint32_t Pop(uint8_t sid, uint8_t mid, uint8_t cha);
+		Sig Top(uint8_t sid, uint8_t mid, uint8_t cha);
 		void PrintSize();
 		bool AllEmpty();
 
@@ -34,18 +34,18 @@ class TimeSorter
 	private:
 		Sig sig_tmp;
 
-		priority_queue<Sig> q_sig[Nsid][Nmid][Nch];
-		uint8_t isid; uint8_t imid; uint8_t ich;
+		priority_queue<Sig> q_sig[Nsid][Nmid][Ncha];
+		uint8_t isid; uint8_t imid; uint8_t icha;
 	
-		bool Empty(uint8_t sid, uint8_t mid, uint8_t ch);
-		uint32_t Size(uint8_t sid, uint8_t mid, uint8_t ch);
+		bool Empty(uint8_t sid, uint8_t mid, uint8_t cha);
+		uint32_t Size(uint8_t sid, uint8_t mid, uint8_t cha);
 		virtual void Clear();
 		void PrintTopAll();
-		void PrintTop(uint8_t sid, uint8_t mid, uint8_t ch);
-		void PrintTopAndPop(uint8_t sid, uint8_t mid, uint8_t ch);
-		void Print(uint8_t sid, uint8_t mid, uint8_t ch);
+		void PrintTop(uint8_t sid, uint8_t mid, uint8_t cha);
+		void PrintTopAndPop(uint8_t sid, uint8_t mid, uint8_t cha);
+		void Print(uint8_t sid, uint8_t mid, uint8_t cha);
 
-		bool checker(uint8_t sid, uint8_t mid, uint8_t ch);
+		bool checker(uint8_t sid, uint8_t mid, uint8_t cha);
 	private:
 		int64_t timewindow = 0;
 		vector<Sig> v_sig;

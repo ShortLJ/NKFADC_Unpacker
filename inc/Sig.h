@@ -17,7 +17,7 @@ class Sig
 
 		uint8_t sid;
 		uint8_t mid;
-		uint8_t ch;
+		uint8_t cha;
 
 		uint16_t peak;
 		uint16_t timing;

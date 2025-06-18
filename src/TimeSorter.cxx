@@ -17,9 +17,9 @@ TimeSorter::~TimeSorter()
 
 bool TimeSorter::AllEmpty()
 {
-	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++)
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (icha=0; icha<Ncha; icha++)
 	{
-		if (!Empty(isid,imid,ich)) return 0;
+		if (!Empty(isid,imid,icha)) return 0;
 	}
 	return 1;
 }
@@ -28,11 +28,11 @@ uint64_t TimeSorter::GetMinLGT()
 {
 	uint64_t ret=-1;
 	//bool fir=1;
-	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++) if (!Empty(isid,imid,ich))
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (icha=0; icha<Ncha; icha++) if (!Empty(isid,imid,icha))
 	{
-		//if (fir) {ret=Top(isid,imid,ich).local_gate_time; fir=0; }
-		if (ret > Top(isid,imid,ich).local_gate_time)
-			ret = Top(isid,imid,ich).local_gate_time;
+		//if (fir) {ret=Top(isid,imid,icha).local_gate_time; fir=0; }
+		if (ret > Top(isid,imid,icha).local_gate_time)
+			ret = Top(isid,imid,icha).local_gate_time;
 	}
 	if(ret==-1)
 	{
@@ -45,12 +45,12 @@ uint64_t TimeSorter::GetMinLGT()
 int TimeSorter::FindSigWithLGT(uint64_t lgt)
 {
 	int ret=0;
-	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (ich=0; ich<Nch; ich++) if (!Empty(isid,imid,ich))
+	for (isid=0; isid<Nsid; isid++)	for (imid=0; imid<Nmid; imid++)	for (icha=0; icha<Ncha; icha++) if (!Empty(isid,imid,icha))
 	{
-		if (Top(isid,imid,ich).local_gate_time - lgt <= timewindow)
+		if (Top(isid,imid,icha).local_gate_time - lgt <= timewindow)
 		{
-			v_sig.push_back(Top(isid,imid,ich));
-			Pop(isid,imid,ich);
+			v_sig.push_back(Top(isid,imid,icha));
+			Pop(isid,imid,icha);
 			ret++;
 		}
 	}
@@ -70,75 +70,75 @@ void TimeSorter::PrintCoin()
 //////// internal methods ////////////// 
 
 
-uint32_t TimeSorter::Pop(uint8_t isid, uint8_t imid, uint8_t ich)
+uint32_t TimeSorter::Pop(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	checker(isid,imid,ich);
-	if(Size(isid,imid,ich)==0) exit(-5);
-	q_sig[isid][imid][ich].pop();
-	return Size(isid,imid,ich);
+	checker(isid,imid,icha);
+	if(Size(isid,imid,icha)==0) exit(-5);
+	q_sig[isid][imid][icha].pop();
+	return Size(isid,imid,icha);
 }
 
-bool TimeSorter::Empty(uint8_t isid, uint8_t imid, uint8_t ich)
+bool TimeSorter::Empty(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	checker(isid,imid,ich);
-	return q_sig[isid][imid][ich].empty();
+	checker(isid,imid,icha);
+	return q_sig[isid][imid][icha].empty();
 }
 
 void TimeSorter::Push(Sig sig)
 {
 	isid = sig.sid; 
 	imid = sig.mid;
-	ich = sig.ch;
-	checker(isid,imid,ich);
-	q_sig[isid][imid][ich].push(sig);
+	icha = sig.cha;
+	checker(isid,imid,icha);
+	q_sig[isid][imid][icha].push(sig);
 }
 
-uint32_t TimeSorter::Size(uint8_t isid, uint8_t imid, uint8_t ich)
+uint32_t TimeSorter::Size(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	checker(isid,imid,ich);
-	return q_sig[isid][imid][ich].size();
+	checker(isid,imid,icha);
+	return q_sig[isid][imid][icha].size();
 }
 
-Sig TimeSorter::Top(uint8_t isid, uint8_t imid, uint8_t ich)
+Sig TimeSorter::Top(uint8_t isid, uint8_t imid, uint8_t icha)
 {	
-	checker(isid,imid,ich);
-	if(Empty(isid,imid,ich))
+	checker(isid,imid,icha);
+	if(Empty(isid,imid,icha))
 	{
-		fprintf(stderr,"q_sig[isid%u][imid%u][ich%u] is empty, but you tried to call Top()!!\n",isid,imid,ich); exit(-6);
+		fprintf(stderr,"q_sig[isid%u][imid%u][icha%u] is empty, but you tried to call Top()!!\n",isid,imid,icha); exit(-6);
 	}
-	return q_sig[isid][imid][ich].top();
+	return q_sig[isid][imid][icha].top();
 }
 
 void TimeSorter::Clear()
 {
 
-	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(ich=0; ich<Nch; ich++)
+	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(icha=0; icha<Ncha; icha++)
 	{
-		while(q_sig[isid][imid][ich].size()>0) 
+		while(q_sig[isid][imid][icha].size()>0) 
 		{
-			Pop(isid,imid,ich);
+			Pop(isid,imid,icha);
 		}
 	}
 }
 
-void TimeSorter::PrintTop(uint8_t isid, uint8_t imid, uint8_t ich)
+void TimeSorter::PrintTop(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	checker(isid,imid,ich);
-	Top(isid,imid,ich).Print();
+	checker(isid,imid,icha);
+	Top(isid,imid,icha).Print();
 }
 
-void TimeSorter::PrintTopAndPop(uint8_t isid, uint8_t imid, uint8_t ich)
+void TimeSorter::PrintTopAndPop(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	PrintTop(isid,imid,ich);
-	Pop(isid,imid,ich);
+	PrintTop(isid,imid,icha);
+	Pop(isid,imid,icha);
 }
 
 void TimeSorter::PrintTopAll()
 {
-	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(ich=0; ich<Nch; ich++) if(imid%2==1)
+	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	for(icha=0; icha<Ncha; icha++) if(imid%2==1)
 	{
-		if(Empty(isid,imid,ich)) continue;
-		PrintTop(isid, imid, ich);
+		if(Empty(isid,imid,icha)) continue;
+		PrintTop(isid, imid, icha);
 	}
 }
 
@@ -147,9 +147,9 @@ void TimeSorter::PrintSize()
 	for(isid=0; isid<Nsid; isid++)	for(imid=0; imid<Nmid; imid++)	//if(imid%2==1)
 	{
 		fprintf(stdout,"\nsid %u mid %u\t", isid, imid);
-		for (ich=0     ; ich<Nch/2; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
+		for (icha=0     ; icha<Ncha/2; icha++)	fprintf(stdout, "%u\t", Size(isid, imid, icha) );
 		fprintf(stdout,"\nsid %u mid %u\t", isid, imid);
-		for (ich=Nch/2 ; ich<Nch  ; ich++)	fprintf(stdout, "%u\t", Size(isid, imid, ich) );
+		for (icha=Ncha/2 ; icha<Ncha  ; icha++)	fprintf(stdout, "%u\t", Size(isid, imid, icha) );
 		
 	}
 	fprintf(stdout,"\n");
@@ -157,12 +157,12 @@ void TimeSorter::PrintSize()
 
 
 
-bool TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t ich)
+bool TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t icha)
 {
-	if(isid<Nsid && imid<Nmid && ich<Nch) return true;
+	if(isid<Nsid && imid<Nmid && icha<Ncha) return true;
 	else
 	{
-		fprintf(stderr,"TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t ich): (isid%u<Nsid%d && imid%u<Nmid%d && ich%u<Nch%d)\n", isid,Nsid,imid,Nmid,ich,Nch);
+		fprintf(stderr,"TimeSorter::checker(uint8_t isid, uint8_t imid, uint8_t icha): (isid%u<Nsid%d && imid%u<Nmid%d && icha%u<Ncha%d)\n", isid,Nsid,imid,Nmid,icha,Ncha);
 		exit(-4);
 		return false;
 	}
