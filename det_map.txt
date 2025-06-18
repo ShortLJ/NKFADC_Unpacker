@@ -1,4 +1,4 @@
-#itype,idet,isid,imid,chL,chU,idx0
+#itype,idet,isid,imid,chaL,chaU,idx0
 0	0	0	1	0	1	0
 1	0	0	1	2	9	0
 0	1	0	2	0	1	0
