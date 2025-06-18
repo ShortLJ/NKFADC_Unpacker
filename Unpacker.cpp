@@ -100,8 +100,10 @@ int main(int argc, char *argv[])
 
 	TFile *file = new TFile(outputfilename,"recreate");
 	TTree *tree = new TTree("nkfadc","nkfadc");
-	Skel_Event asgard_event = Skel_Event();
-	tree->Branch("Skel_Event", "Skel_Event", &asgard_event, 32000, 0 );
+	vector<Sig> v_sig;
+	tree->Branch("v_sig","v_sig",&v_sig);
+	//Skel_Event asgard_event = Skel_Event();
+	//tree->Branch("Skel_Event", "Skel_Event", &asgard_event, 32000, 0 );
 
 
 
@@ -117,9 +119,9 @@ int main(int argc, char *argv[])
 		uint64_t minlgt = timesorter.GetMinLGT();
 		int size =0;
 		while (int ret=timesorter.FindSigWithLGT(minlgt)) {size+=ret;}
-		vector<Sig> v_sig_coin = timesorter.GetCoinvSig();
+		v_sig = timesorter.GetCoinvSig();
 		
-		asgard_event = Skel_Event(v_sig_coin);
+		//asgard_event = Skel_Event(v_sig);
 
 
 		//fprintf(stdout,"event.size() %d\n",event.size());
